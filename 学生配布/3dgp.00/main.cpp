@@ -5,6 +5,9 @@
 
 #include "framework.h"
 
+const LONG SCREEN_WIDTH = 1280;
+const LONG SCREEN_HEIGHT = 720;
+
 LRESULT CALLBACK fnWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	framework *f = reinterpret_cast<framework*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
@@ -31,7 +34,7 @@ INT WINAPI wWinMain(HINSTANCE instance, HINSTANCE prev_instance, LPWSTR cmd_line
 	wcex.hIconSm = 0;
 	RegisterClassEx(&wcex);
 
-	RECT rc = { 0, 0, framework::SCREEN_WIDTH, framework::SCREEN_HEIGHT };
+	RECT rc = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 	HWND hwnd = CreateWindow(_T("3dgp"), _T(""), WS_OVERLAPPEDWINDOW ^ WS_MAXIMIZEBOX ^ WS_THICKFRAME | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, instance, NULL);
 	ShowWindow(hwnd, cmd_show);

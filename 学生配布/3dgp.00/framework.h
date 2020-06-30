@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include <sstream>
+#include <d3d11.h>
 
 #include "misc.h"
 #include "high_resolution_timer.h"
@@ -10,9 +11,14 @@
 class framework
 {
 public:
-	CONST HWND hwnd;
-	static CONST LONG SCREEN_WIDTH = 1280;
-	static CONST LONG SCREEN_HEIGHT = 720;
+	const HWND hwnd;
+
+	ID3D11Device*			device = nullptr;
+	ID3D11DeviceContext*	immediate_context = nullptr;
+	IDXGISwapChain*			swap_chain = nullptr;
+	ID3D11RenderTargetView* render_target_view = nullptr;
+	ID3D11Texture2D*		depth_stencil_buffer = nullptr;
+	ID3D11DepthStencilView* depth_stencil_view = nullptr;
 
 	framework(HWND hwnd) : hwnd(hwnd)
 	{
@@ -42,6 +48,8 @@ public:
 				render(timer.time_interval());
 			}
 		}
+				finalize();
+
 		return static_cast<int>(msg.wParam);
 	}
 
@@ -82,6 +90,7 @@ public:
 
 private:
 	bool initialize();
+	void finalize();
 	void update(float elapsed_time/*Elapsed seconds from last frame*/);
 	void render(float elapsed_time/*Elapsed seconds from last frame*/);
 
