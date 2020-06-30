@@ -23,7 +23,7 @@
     ps_2_x
     dcl t0  // pin<4,5,6,7>
 
-#line 4 "C:\Users\21900162\Documents\RenderingEngine\学生�E布\3dgp.00\spirte_ps.hlsl"
+#line 4 "D:\gp\描画エンジン開発\学生�E布\3dgp.00\spirte_ps.hlsl"
     mov r0, t0  // ::main<0,1,2,3>
     mov oC0, r0  // ::main<0,1,2,3>
 
@@ -37,7 +37,7 @@ dcl_output o0.xyzw
 //   v1.x <- pin.color.x; v1.y <- pin.color.y; v1.z <- pin.color.z; v1.w <- pin.color.w; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 4 "C:\Users\21900162\Documents\RenderingEngine\学生E"
+#line 4 "D:\gp\描画エンジン開発\学生E"
 mov o0.xyzw, v1.xyzw
 ret 
 // Approximately 2 instruction slots used

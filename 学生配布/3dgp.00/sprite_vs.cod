@@ -32,7 +32,7 @@
     dcl_texcoord v0  // pos<0,1,2,3>
     dcl_texcoord1 v1  // color<0,1,2,3>
 
-#line 6 "C:\Users\21900162\Documents\RenderingEngine\学生�E布\3dgp.00\sprite_vs.hlsl"
+#line 6 "D:\gp\描画エンジン開発\学生�E布\3dgp.00\sprite_vs.hlsl"
     mov r0, v0  // ::vout<0,1,2,3>
     mov r1, v1  // ::vout<4,5,6,7>
     mov oT0, r1  // ::main<4,5,6,7>
@@ -57,7 +57,7 @@ dcl_temps 2
 //   o1.x <- <main return value>.color.x; o1.y <- <main return value>.color.y; o1.z <- <main return value>.color.z; o1.w <- <main return value>.color.w; 
 //   o0.x <- <main return value>.pos.x; o0.y <- <main return value>.pos.y; o0.z <- <main return value>.pos.z; o0.w <- <main return value>.pos.w
 //
-#line 6 "C:\Users\21900162\Documents\RenderingEngine\学生E"
+#line 6 "D:\gp\描画エンジン開発\学生E"
 mov r0.xyzw, v0.xyzw  // r0.x <- vout.pos.x; r0.y <- vout.pos.y; r0.z <- vout.pos.z; r0.w <- vout.pos.w
 
 #line 7
