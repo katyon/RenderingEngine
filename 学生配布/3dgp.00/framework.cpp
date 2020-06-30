@@ -174,7 +174,10 @@ void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
     immediate_context->ClearDepthStencilView(depth_stencil_view, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
     immediate_context->OMSetRenderTargets(1, &render_target_view, depth_stencil_view);
 
-    sprites[0]->render(immediate_context);
+    static float angle = 0;
+    angle += 6.0f * elapsed_time;
+
+    sprites[0]->render(immediate_context, 200, 200, 200, 200, angle, 1, 0, 0, 1);
 
     swap_chain->Present(0, 0);
 }
