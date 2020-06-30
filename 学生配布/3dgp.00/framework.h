@@ -4,9 +4,11 @@
 #include <tchar.h>
 #include <sstream>
 #include <d3d11.h>
+#include <wrl.h>
 
 #include "misc.h"
 #include "high_resolution_timer.h"
+#include "sprite.h"
 
 class framework
 {
@@ -19,6 +21,8 @@ public:
 	ID3D11RenderTargetView* render_target_view = nullptr;
 	ID3D11Texture2D*		depth_stencil_buffer = nullptr;
 	ID3D11DepthStencilView* depth_stencil_view = nullptr;
+
+	sprite* sprites[1024] = { nullptr };
 
 	framework(HWND hwnd) : hwnd(hwnd)
 	{

@@ -105,12 +105,14 @@ bool framework::initialize()
         D3D11_VIEWPORT viewport;
         viewport.TopLeftX = 0;
         viewport.TopLeftY = 0;
-        viewport.Width = static_cast<float>(screen_width / 2);
-        viewport.Height = static_cast<float>(screen_height / 2);
+        viewport.Width = static_cast<float>(screen_width);
+        viewport.Height = static_cast<float>(screen_height);
         viewport.MinDepth = 0.0f;
         viewport.MaxDepth = 1.0f;
         immediate_context->RSSetViewports(1, &viewport);
     }
+
+    sprites[0] = new sprite(device);
 
     return true;
 }
@@ -118,6 +120,15 @@ bool framework::initialize()
 void framework::finalize()
 {
     // ‰ð•úˆ—
+    for (sprite*& sprite : sprites)
+    {
+        if (sprite != nullptr)
+        {
+            delete sprite;
+            sprite = nullptr;
+        }
+    }
+
     if (depth_stencil_view != nullptr)
     {
         depth_stencil_view->Release();
@@ -163,6 +174,7 @@ void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
     immediate_context->ClearDepthStencilView(depth_stencil_view, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
     immediate_context->OMSetRenderTargets(1, &render_target_view, depth_stencil_view);
 
+    sprites[0]->render(immediate_context);
 
     swap_chain->Present(0, 0);
 }
