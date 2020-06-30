@@ -10,6 +10,8 @@
 #include <d3d11.h>
 #include <wrl.h>
 
+#include "sprite.h"
+
 class framework
 {
 public:
@@ -19,15 +21,18 @@ public:
     //static CONST LONG SCREEN_HEIGHT = 720;
 
     Microsoft::WRL::ComPtr<ID3D11Device> device;
-    Microsoft::WRL::ComPtr<ID3D11DeviceContext> immediate_context;
-    Microsoft::WRL::ComPtr<IDXGISwapChain> swap_chain;
-    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> render_target_view;
-    Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depth_stencil_view;
-    //ID3D11Device*           device = NULL;
-    //ID3D11DeviceContext*    immediate_context = NULL;
-    //IDXGISwapChain*         swap_chain = NULL;
-    //ID3D11RenderTargetView* render_target_view = NULL;
-    //ID3D11DepthStencilView* depth_stencil_view = NULL;
+    //Microsoft::WRL::ComPtr<ID3D11DeviceContext> immediate_context;
+    //Microsoft::WRL::ComPtr<IDXGISwapChain> swap_chain;
+    //Microsoft::WRL::ComPtr<ID3D11RenderTargetView> render_target_view;
+    //Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depth_stencil_view;
+    ID3D11Device*           device = nullptr;
+    ID3D11DeviceContext*    immediate_context = nullptr;
+    IDXGISwapChain*         swap_chain = nullptr;
+    ID3D11RenderTargetView* render_target_view = nullptr;
+    ID3D11Texture2D*        depth_stencil_buffer = nullptr;
+    ID3D11DepthStencilView* depth_stencil_view = nullptr;
+
+    sprite* sprites[1024] = { nullptr };
 
     framework(HWND hwnd) : hwnd(hwnd)
     {
@@ -97,6 +102,7 @@ public:
 
 private:
     bool initialize();
+    void finalize();
     void update(float elapsed_time/*Elapsed seconds from last frame*/);
     void render(float elapsed_time/*Elapsed seconds from last frame*/);
 
