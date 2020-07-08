@@ -1,5 +1,8 @@
 #include "framework.h"
 
+#include <d3d11.h>
+#include <memory>
+
 bool framework::initialize()
 {
     HRESULT hr = S_OK;
@@ -112,7 +115,11 @@ bool framework::initialize()
         immediate_context->RSSetViewports(1, &viewport);
     }
 
-    sprites[0] = new sprite(device);
+    sprites[0] = new sprite(device,L"player-sprites.png");
+    //for (auto& p : sprites)
+    //{
+    //    p = new sprite(device, L"player-sprites.png");
+    //}
 
     return true;
 }
@@ -165,6 +172,7 @@ void framework::update(float elapsed_time/*Elapsed seconds from last frame*/)
 {
 
 }
+
 void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
 {
     HRESULT hr = S_OK;
@@ -176,8 +184,14 @@ void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
 
     static float angle = 0;
     angle += 6.0f * elapsed_time;
-
-    sprites[0]->render(immediate_context, 200, 200, 200, 200, angle, 1, 0, 0, 1);
+    float x = 0;
+    float y = 0;
+    //for (auto& p : sprites)
+    //{
+    //    p->render(immediate_context, x, static_cast<int>(y) % 720, 200, 200, 140 * 0, 240 * 0, 140, 240, angle, 1, 0, 0, 1);
+    //    x += 32;   if (x > 1280 - 64) { x = 0;    y += 24; }
+    //}
+    sprites[0]->render(immediate_context, 200, 200, 200, 200, 140 * 0, 240 * 0, 140, 240, angle, 1, 0, 0, 1);
 
     swap_chain->Present(0, 0);
 }

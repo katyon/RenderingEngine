@@ -1,10 +1,10 @@
 #include <stdio.h> 
-// UNIT.02
+
 #include "sprite.h"
-
 #include "misc.h"
+#include "texture.h"
 
-sprite::sprite(ID3D11Device* device)
+sprite::sprite(ID3D11Device* device, const wchar_t* file_name)
 {
     HRESULT hr = S_OK;
 
@@ -16,10 +16,10 @@ sprite::sprite(ID3D11Device* device)
     // +-----------+
     // 2           3
     vertex vertices[] = {
-        { DirectX::XMFLOAT3(-0.5, +0.5, 0), DirectX::XMFLOAT4(1, 1, 1, 1) },
-        { DirectX::XMFLOAT3(+0.5, +0.5, 0), DirectX::XMFLOAT4(1, 0, 0, 1) },
-        { DirectX::XMFLOAT3(-0.5, -0.5, 0), DirectX::XMFLOAT4(0, 1, 0, 1) },
-        { DirectX::XMFLOAT3(+0.5, -0.5, 0), DirectX::XMFLOAT4(0, 0, 1, 1) },
+        { DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT4(1, 1, 1, 1), DirectX::XMFLOAT2(0, 0) },
+        { DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT4(1, 1, 1, 1), DirectX::XMFLOAT2(0, 0) },
+        { DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT4(1, 1, 1, 1), DirectX::XMFLOAT2(0, 0) },
+        { DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT4(1, 1, 1, 1), DirectX::XMFLOAT2(0, 0) },
     };
     // 頂点バッファの生成
     {
@@ -30,12 +30,10 @@ sprite::sprite(ID3D11Device* device)
         buffer_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         buffer_desc.MiscFlags = 0;
         buffer_desc.StructureByteStride = 0;
-
         D3D11_SUBRESOURCE_DATA subresource_data = {};
         subresource_data.pSysMem = vertices;
         subresource_data.SysMemPitch = 0;
         subresource_data.SysMemSlicePitch = 0;
-
         hr = device->CreateBuffer(&buffer_desc, &subresource_data, &vertex_buffer);
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
@@ -66,6 +64,7 @@ sprite::sprite(ID3D11Device* device)
         {
             { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
             { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         };
 
         // 入力レイアウトの生成
@@ -130,9 +129,25 @@ sprite::sprite(ID3D11Device* device)
         );
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
+
+    hr = load_texture_from_file(device, file_name, &shader_resource_view, &texture2d_desc);
+
+    D3D11_SAMPLER_DESC sampler_desc;
+    sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT; //D3D11_FILTER_ANISOTROPIC
+    sampler_desc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+    sampler_desc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+    sampler_desc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+    sampler_desc.MipLODBias = 0;
+    sampler_desc.MaxAnisotropy = 16;
+    sampler_desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+    memcpy(sampler_desc.BorderColor, &DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f), sizeof(DirectX::XMFLOAT4));
+    sampler_desc.MinLOD = 0;
+    sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
+    hr = device->CreateSamplerState(&sampler_desc, &sampler_state);
+    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 }
 
-void sprite::render(ID3D11DeviceContext* immediate_context, float dx, float dy, float dw, float dh, float angle, float r, float g, float b, float a) const
+void sprite::render(ID3D11DeviceContext* immediate_context, float dx, float dy, float dw, float dh, float sx, float sy, float sw, float sh, float angle, float r, float g, float b, float a) const
 {
     D3D11_VIEWPORT viewport;
     UINT num_viewports = 1;
@@ -220,9 +235,16 @@ void sprite::render(ID3D11DeviceContext* immediate_context, float dx, float dy, 
     vertices[0].position.z = vertices[1].position.z = vertices[2].position.z = vertices[3].position.z = 0.0f;
 
     DirectX::XMFLOAT4 color(r, g, b, a);
-    DirectX::XMFLOAT4 color1(r - 1, g, b + 1, a);
-    vertices[0].color = vertices[1].color = color;
-    vertices[2].color = vertices[3].color = color1;
+    vertices[0].color = vertices[1].color = vertices[2].color = vertices[3].color = color;
+
+    vertices[0].texcoord.x = static_cast<FLOAT>(sx) / texture2d_desc.Width;
+    vertices[0].texcoord.y = static_cast<FLOAT>(sy) / texture2d_desc.Height;
+    vertices[1].texcoord.x = static_cast<FLOAT>(sx + sw) / texture2d_desc.Width;
+    vertices[1].texcoord.y = static_cast<FLOAT>(sy) / texture2d_desc.Height;
+    vertices[2].texcoord.x = static_cast<FLOAT>(sx) / texture2d_desc.Width;
+    vertices[2].texcoord.y = static_cast<FLOAT>(sy + sh) / texture2d_desc.Height;
+    vertices[3].texcoord.x = static_cast<FLOAT>(sx + sw) / texture2d_desc.Width;
+    vertices[3].texcoord.y = static_cast<FLOAT>(sy + sh) / texture2d_desc.Height;
 
     immediate_context->Unmap(vertex_buffer, 0);
 
@@ -236,6 +258,9 @@ void sprite::render(ID3D11DeviceContext* immediate_context, float dx, float dy, 
 
     immediate_context->VSSetShader(vertex_shader, nullptr, 0);
     immediate_context->PSSetShader(pixel_shader, nullptr, 0);
+
+    immediate_context->PSSetShaderResources(0, 1, &shader_resource_view);
+    immediate_context->PSSetSamplers(0, 1, &sampler_state);
 
     immediate_context->Draw(4, 0);
 }

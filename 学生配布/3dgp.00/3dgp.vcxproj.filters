@@ -28,6 +28,9 @@
     <ClCompile Include="sprite.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="texture.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -40,6 +43,9 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="sprite.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="texture.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
