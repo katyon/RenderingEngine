@@ -17,7 +17,9 @@ private:
     ID3D11ShaderResourceView* shader_resource_view = nullptr;
     D3D11_TEXTURE2D_DESC texture2d_desc;
     ID3D11SamplerState* sampler_state = nullptr;
+
     ID3D11DepthStencilState* depth_stencil_state = nullptr;
+    ID3D11BlendState* blend_state = nullptr;
 public:
     struct vertex
     {

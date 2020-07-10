@@ -130,6 +130,56 @@ sprite::sprite(ID3D11Device* device, const wchar_t* file_name)
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
 
+    // 深度ステンシルステートの作成
+    {
+        // 深度ステンシルステートの設定オプション
+        D3D11_DEPTH_STENCIL_DESC depth_stencil_desc = {};
+        depth_stencil_desc.DepthEnable = true; // 深度テスト
+        depth_stencil_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+        depth_stencil_desc.DepthFunc = D3D11_COMPARISON_LESS;
+        depth_stencil_desc.StencilEnable = false;
+        depth_stencil_desc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
+        depth_stencil_desc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
+        depth_stencil_desc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+        depth_stencil_desc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+        depth_stencil_desc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+        depth_stencil_desc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+        depth_stencil_desc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+        depth_stencil_desc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+        depth_stencil_desc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+        depth_stencil_desc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+
+        // 深度ステンシルステートの作成
+        hr = device->CreateDepthStencilState(
+            &depth_stencil_desc,
+            &depth_stencil_state
+        );
+        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+    }
+
+    // ブレンド状態オブジェクトの作成
+    {
+        // ブレンド状態オブジェクトの設定オプション
+        D3D11_BLEND_DESC blend_desc = {};
+        blend_desc.AlphaToCoverageEnable = false;
+        blend_desc.IndependentBlendEnable = false;
+        blend_desc.RenderTarget[0].BlendEnable = true;
+        blend_desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+        blend_desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+        blend_desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+        blend_desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+        blend_desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+        blend_desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+        blend_desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+        // ブレンド状態オブジェクトの作成
+        hr = device->CreateBlendState(
+            &blend_desc,
+            &blend_state
+        );
+        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+    }
+
     hr = load_texture_from_file(device, file_name, &shader_resource_view, &texture2d_desc);
 
     D3D11_SAMPLER_DESC sampler_desc;
@@ -261,6 +311,9 @@ void sprite::render(ID3D11DeviceContext* immediate_context, float dx, float dy, 
 
     immediate_context->PSSetShaderResources(0, 1, &shader_resource_view);
     immediate_context->PSSetSamplers(0, 1, &sampler_state);
+
+    immediate_context->OMSetDepthStencilState(depth_stencil_state, 1);
+    immediate_context->OMSetBlendState(blend_state, nullptr, 0xffffffff);
 
     immediate_context->Draw(4, 0);
 }
