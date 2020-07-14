@@ -157,28 +157,28 @@ sprite::sprite(ID3D11Device* device, const wchar_t* file_name)
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
 
-    // ブレンド状態オブジェクトの作成
-    {
-        // ブレンド状態オブジェクトの設定オプション
-        D3D11_BLEND_DESC blend_desc = {};
-        blend_desc.AlphaToCoverageEnable = false;
-        blend_desc.IndependentBlendEnable = false;
-        blend_desc.RenderTarget[0].BlendEnable = true;
-        blend_desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-        blend_desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-        blend_desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-        blend_desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-        blend_desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-        blend_desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-        blend_desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+    //// ブレンド状態オブジェクトの作成
+    //{
+    //    // ブレンド状態オブジェクトの設定オプション
+    //    D3D11_BLEND_DESC blend_desc = {};
+    //    blend_desc.AlphaToCoverageEnable = false;
+    //    blend_desc.IndependentBlendEnable = false;
+    //    blend_desc.RenderTarget[0].BlendEnable = true;
+    //    blend_desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+    //    blend_desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+    //    blend_desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+    //    blend_desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+    //    blend_desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+    //    blend_desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    //    blend_desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-        // ブレンド状態オブジェクトの作成
-        hr = device->CreateBlendState(
-            &blend_desc,
-            &blend_state
-        );
-        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-    }
+    //    // ブレンド状態オブジェクトの作成
+    //    hr = device->CreateBlendState(
+    //        &blend_desc,
+    //        &blend_state
+    //    );
+    //    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+    //}
 
     hr = load_texture_from_file(device, file_name, &shader_resource_view, &texture2d_desc);
 
@@ -313,7 +313,7 @@ void sprite::render(ID3D11DeviceContext* immediate_context, float dx, float dy, 
     immediate_context->PSSetSamplers(0, 1, &sampler_state);
 
     immediate_context->OMSetDepthStencilState(depth_stencil_state, 1);
-    immediate_context->OMSetBlendState(blend_state, nullptr, 0xffffffff);
+    //immediate_context->OMSetBlendState(blend_state, nullptr, 0xffffffff);
 
     immediate_context->Draw(4, 0);
 }

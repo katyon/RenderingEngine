@@ -1,7 +1,8 @@
-#include "framework.h"
-
 #include <d3d11.h>
 #include <memory>
+
+#include "framework.h"
+#include "blender.h"
 
 bool framework::initialize()
 {
@@ -115,7 +116,7 @@ bool framework::initialize()
         immediate_context->RSSetViewports(1, &viewport);
     }
 
-    sprites[0] = new sprite(device,L"player-sprites.png");
+    sprites[0] = new sprite(device, L"player-sprites.png");
     //for (auto& p : sprites)
     //{
     //    p = new sprite(device, L"player-sprites.png");
@@ -191,7 +192,12 @@ void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
     //    p->render(immediate_context, x, static_cast<int>(y) % 720, 200, 200, 140 * 0, 240 * 0, 140, 240, angle, 1, 0, 0, 1);
     //    x += 32;   if (x > 1280 - 64) { x = 0;    y += 24; }
     //}
-    sprites[0]->render(immediate_context, 200, 200, 200, 200, 140 * 0, 240 * 0, 140, 240, angle, 1, 0, 0, 1);
+
+    static blender blender(device);
+    immediate_context->OMSetBlendState(blender.blend_states[blender::BS_NONE], nullptr, 0xffffffff);
+    sprites[0]->render(immediate_context, 0, 0, 1280, 720, 0, 0, 1920, 1080, angle, 1, 1, 1, 1);
+    immediate_context->OMSetBlendState(blender.blend_states[blender::BS_SUBTRACT], nullptr, 0xffffffff);
+    sprites[1]->render(immediate_context, 8, 8, 1280, 720, 0, 0, 900, 877, 0, 1, 1, 1, 1);
 
     swap_chain->Present(0, 0);
 }

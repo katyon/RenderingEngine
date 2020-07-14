@@ -19,7 +19,7 @@ private:
     ID3D11SamplerState* sampler_state = nullptr;
 
     ID3D11DepthStencilState* depth_stencil_state = nullptr;
-    ID3D11BlendState* blend_state = nullptr;
+    //ID3D11BlendState* blend_state = nullptr;
 public:
     struct vertex
     {

@@ -48,6 +48,9 @@
     <ClInclude Include="texture.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="blender.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="sprite.hlsli">
