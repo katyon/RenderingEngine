@@ -11,13 +11,14 @@ const LONG SCREEN_HEIGHT = 720;
 
 LRESULT CALLBACK fnWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-	framework *f = reinterpret_cast<framework*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+	framework* f = reinterpret_cast<framework*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 	return f ? f->handle_message(hwnd, msg, wparam, lparam) : DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
 INT WINAPI wWinMain(HINSTANCE instance, HINSTANCE prev_instance, LPWSTR cmd_line, INT cmd_show)
 {
 	srand(static_cast<unsigned int>(time(nullptr)));
+
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif

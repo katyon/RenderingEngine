@@ -31,6 +31,9 @@
     <ClCompile Include="texture.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="shader.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -51,9 +54,15 @@
     <ClInclude Include="blender.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="shader.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="sprite.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="sprite_batch.hlsli">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
@@ -62,6 +71,12 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="sprite_ps.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="sprite_batch_ps.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="sprite_batch_vs.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
