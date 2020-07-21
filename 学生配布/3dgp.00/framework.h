@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include <sstream>
+#include <memory>
 #include <d3d11.h>
 #include <wrl.h>
 

@@ -116,7 +116,8 @@ bool framework::initialize()
         immediate_context->RSSetViewports(1, &viewport);
     }
 
-    sprites[0] = new sprite(device, L"player-sprites.png");
+    sprites[0] = new sprite(device, L"logos.jpg");
+    sprites[1] = new sprite(device, L"n64.png");
     //for (auto& p : sprites)
     //{
     //    p = new sprite(device, L"player-sprites.png");
@@ -178,7 +179,7 @@ void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
 {
     HRESULT hr = S_OK;
 
-    FLOAT color[] = { 0.2f, 0.5f, 0.5f, 1.0f };
+    FLOAT color[] = { 0.2f, 0.2f, 0.2f, 1.0f };
     immediate_context->ClearRenderTargetView(render_target_view, color);
     immediate_context->ClearDepthStencilView(depth_stencil_view, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
     immediate_context->OMSetRenderTargets(1, &render_target_view, depth_stencil_view);
@@ -194,9 +195,9 @@ void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
     //}
 
     static blender blender(device);
-    immediate_context->OMSetBlendState(blender.blend_states[blender::BS_NONE], nullptr, 0xffffffff);
-    sprites[0]->render(immediate_context, 0, 0, 1280, 720, 0, 0, 1920, 1080, angle, 1, 1, 1, 1);
-    immediate_context->OMSetBlendState(blender.blend_states[blender::BS_SUBTRACT], nullptr, 0xffffffff);
+    immediate_context->OMSetBlendState(blender.blend_states[blender::BS_NONE], nullptr, 0xFFFFFFFF);
+    sprites[0]->render(immediate_context, 0, 0, 1280, 720, 0, 0, 1920, 1080, 0, 1, 1, 1, 1);
+    immediate_context->OMSetBlendState(blender.blend_states[blender::BS_SUBTRACT], nullptr, 0xFFFFFFFF);
     sprites[1]->render(immediate_context, 8, 8, 1280, 720, 0, 0, 900, 877, 0, 1, 1, 1, 1);
 
     swap_chain->Present(0, 0);

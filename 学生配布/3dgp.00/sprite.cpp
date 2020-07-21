@@ -130,6 +130,22 @@ sprite::sprite(ID3D11Device* device, const wchar_t* file_name)
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
 
+    hr = load_texture_from_file(device, file_name, &shader_resource_view, &texture2d_desc);
+
+    D3D11_SAMPLER_DESC sampler_desc;
+    sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT; //D3D11_FILTER_ANISOTROPIC
+    sampler_desc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+    sampler_desc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+    sampler_desc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+    sampler_desc.MipLODBias = 0;
+    sampler_desc.MaxAnisotropy = 16;
+    sampler_desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+    memcpy(sampler_desc.BorderColor, &DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f), sizeof(DirectX::XMFLOAT4));
+    sampler_desc.MinLOD = 0;
+    sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
+    hr = device->CreateSamplerState(&sampler_desc, &sampler_state);
+    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
     // 深度ステンシルステートの作成
     {
         // 深度ステンシルステートの設定オプション
@@ -179,22 +195,6 @@ sprite::sprite(ID3D11Device* device, const wchar_t* file_name)
     //    );
     //    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     //}
-
-    hr = load_texture_from_file(device, file_name, &shader_resource_view, &texture2d_desc);
-
-    D3D11_SAMPLER_DESC sampler_desc;
-    sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT; //D3D11_FILTER_ANISOTROPIC
-    sampler_desc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-    sampler_desc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-    sampler_desc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
-    sampler_desc.MipLODBias = 0;
-    sampler_desc.MaxAnisotropy = 16;
-    sampler_desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-    memcpy(sampler_desc.BorderColor, &DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f), sizeof(DirectX::XMFLOAT4));
-    sampler_desc.MinLOD = 0;
-    sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
-    hr = device->CreateSamplerState(&sampler_desc, &sampler_state);
-    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 }
 
 void sprite::render(ID3D11DeviceContext* immediate_context, float dx, float dy, float dw, float dh, float sx, float sy, float sw, float sh, float angle, float r, float g, float b, float a) const
