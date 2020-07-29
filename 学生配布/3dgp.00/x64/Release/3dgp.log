@@ -1,0 +1,11 @@
+﻿  compilation object save succeeded; see C:\Users\21900162\Documents\RenderingEngine\学生配布\3dgp.00\x64\Release\sprite_batch_ps.cso
+  compilation object save succeeded; see C:\Users\21900162\Documents\RenderingEngine\学生配布\3dgp.00\x64\Release\sprite_batch_vs.cso
+  compilation object save succeeded; see C:\Users\21900162\Documents\RenderingEngine\学生配布\3dgp.00\x64\Release\sprite_ps.cso
+  compilation object save succeeded; see C:\Users\21900162\Documents\RenderingEngine\学生配布\3dgp.00\x64\Release\sprite_vs.cso
+  main.cpp
+  framework.cpp
+  shader.cpp
+  sprite.cpp
+sprite.cpp(278): warning C4267: '=': 'size_t' から 'UINT' に変換しました。データが失われているかもしれません。
+  texture.cpp
+texture.cpp(4): fatal error C1083: include ファイルを開けません。'WICTextureLoader.h':No such file or directory
