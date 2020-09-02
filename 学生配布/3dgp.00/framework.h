@@ -8,6 +8,8 @@
 #include "misc.h"
 #include "high_resolution_timer.h"
 
+#include "imgui.h"
+
 #include <d3d11.h>
 #include <wrl.h>
 
@@ -59,11 +61,23 @@ public:
 				render(timer.time_interval());
 			}
 		}
+
+#ifdef USE_IMGUI
+		// cleanup imgui
+		ImGui_ImplDX11_Shutdown();
+		ImGui_ImplWin32_Shutdown();
+		ImGui::DestroyContext();
+#endif // USE_IMGUI
+
 		return static_cast<int>(msg.wParam);
 	}
 
 	LRESULT CALLBACK handle_message(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{
+#ifdef USE_IMGUI
+		//imgui event catch
+		if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) { return true; }
+#endif
 		switch (msg)
 		{
 		case WM_PAINT:

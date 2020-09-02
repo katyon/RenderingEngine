@@ -136,6 +136,19 @@ bool framework::initialize()
 	viewport.MaxDepth = 1.0f;
 	immediate_context->RSSetViewports(1, &viewport);
 
+#ifdef USE_IMGUI
+	// setup imgui
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	//日本語用フォントの設定
+	io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\meiryo.ttc", 13.0f, nullptr, glyphRangesJapanese);
+	// setup platform/renderer
+	ImGui_ImplWin32_Init(hwnd);
+	ImGui_ImplDX11_Init(device.Get(), immediate_context.Get());
+	ImGui::StyleColorsDark();
+#endif // USE_IMGUI
+
 	sprites[0] = std::make_unique<sprite>(device.Get(), L"player-sprites.png");
 	particle = std::make_unique<sprite>(device.Get(), L"particle-smoke.png");
 	font = std::make_unique<sprite>(device.Get(), L"./fonts/font0.png");
@@ -150,6 +163,13 @@ void framework::update(float elapsed_time/*Elapsed seconds from last frame*/)
 }
 void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
 {
+#ifdef USE_IMGUI
+	// imgui new frame
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+#endif // USE_IMGUI
+
 	HRESULT hr = S_OK;
 
 	FLOAT color[] = { 0.2f, 0.2f, 0.2f, 1.0f };
@@ -204,6 +224,42 @@ void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
 	decltype(queue)::iterator best = std::min_element(queue.begin(), queue.end());
 	immediate_context->OMSetBlendState(blender.states[blender::BS_ADD].Get(), nullptr, 0xFFFFFFFF);
 	font->textout(immediate_context.Get(), "benchmark t=" + std::to_string(*std::min_element(queue.begin(), queue.end())), 0, 0, 16, 16, 1, 1, 1, 1);
+
+#ifdef USE_IMGUI
+	// sample code
+	static bool f_open = true;
+	ImGui::Begin("test", &f_open);
+	ImGui::Text("Hello World");
+	ImGui::End();
+
+	//static ImGuiID dockspaceID = 0;
+ //       bool active = true;
+ //       if (ImGui::Begin("Master Window", &active))
+ //       {
+	//		ImGui::Text("Hello World");
+	//				   				   			 		  
+	//	}
+ //       if (active)
+ //       {
+ //           // Declare Central dockspace
+ //           dockspaceID = ImGui::GetID("HUB_DockSpace");
+ //           ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None | ImGuiDockNodeFlags_PassthruCentralNode/| ImGuiDockNodeFlags_NoResize/);
+ //       }
+ //       ImGui::End();
+
+ //       ImGui::SetNextWindowDockID(dockspaceID, ImGuiCond_FirstUseEver);
+ //       if (ImGui::Begin("Dockable Window"))
+ //       {
+ //           ImGui::TextUnformatted("Test");
+ //       }
+ //       ImGui::End();
+#endif
+
+#ifdef USE_IMGUI
+	//imgui render
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+#endif
 
 	swap_chain->Present(0, 0);
 }
