@@ -55,7 +55,6 @@ HRESULT create_ps_from_cso(ID3D11Device* device, const char* cso_name, ID3D11Pix
 	auto it = cache.find(cso_name);
 	if (it != cache.end())
 	{
-		//it->second.Attach(*pixel_shader);
 		*pixel_shader = it->second.Get();
 		(*pixel_shader)->AddRef();
 		return S_OK;

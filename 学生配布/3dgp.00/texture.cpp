@@ -15,7 +15,6 @@ HRESULT load_texture_from_file(ID3D11Device* device, const wchar_t* file_name, I
 	auto it = cache.find(file_name);
 	if (it != cache.end())
 	{
-		//it->second.Attach(*shader_resource_view);
 		*shader_resource_view = it->second.Get();
 		(*shader_resource_view)->AddRef();
 		(*shader_resource_view)->GetResource(resource.GetAddressOf());

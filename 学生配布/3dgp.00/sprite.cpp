@@ -24,8 +24,8 @@ sprite::sprite(ID3D11Device* device, const wchar_t* file_name)
 	buffer_desc.StructureByteStride = 0;
 	D3D11_SUBRESOURCE_DATA subresource_data = {};
 	subresource_data.pSysMem = vertices;
-	subresource_data.SysMemPitch = 0; //Not use for vertex buffers.
-	subresource_data.SysMemSlicePitch = 0; //Not use for vertex buffers.
+	subresource_data.SysMemPitch = 0;
+	subresource_data.SysMemSlicePitch = 0;
 	hr = device->CreateBuffer(&buffer_desc, &subresource_data, vertex_buffer.GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
@@ -39,11 +39,11 @@ sprite::sprite(ID3D11Device* device, const wchar_t* file_name)
 	create_vs_from_cso(device, "sprite_vs.cso", vertex_shader.GetAddressOf(), input_layout.GetAddressOf(), input_element_desc, ARRAYSIZE(input_element_desc));
 	create_ps_from_cso(device, "sprite_ps.cso", pixel_shader.GetAddressOf());
 
-	D3D11_RASTERIZER_DESC rasterizer_desc = {}; //https://msdn.microsoft.com/en-us/library/windows/desktop/ff476198(v=vs.85).aspx
-	rasterizer_desc.FillMode = D3D11_FILL_SOLID; //D3D11_FILL_WIREFRAME, D3D11_FILL_SOLID
-	rasterizer_desc.CullMode = D3D11_CULL_NONE; //D3D11_CULL_NONE, D3D11_CULL_FRONT, D3D11_CULL_BACK   
+	D3D11_RASTERIZER_DESC rasterizer_desc = {};
+	rasterizer_desc.FillMode = D3D11_FILL_SOLID;
+	rasterizer_desc.CullMode = D3D11_CULL_NONE;   
 	rasterizer_desc.FrontCounterClockwise = FALSE;
-	rasterizer_desc.DepthBias = 0; //https://msdn.microsoft.com/en-us/library/windows/desktop/cc308048(v=vs.85).aspx
+	rasterizer_desc.DepthBias = 0;
 	rasterizer_desc.DepthBiasClamp = 0;
 	rasterizer_desc.SlopeScaledDepthBias = 0;
 	rasterizer_desc.DepthClipEnable = FALSE;
@@ -88,11 +88,7 @@ sprite::sprite(ID3D11Device* device, const wchar_t* file_name)
 	_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 }
 
-void sprite::render(ID3D11DeviceContext* immediate_context, float dx, float dy, float dw, float dh, float sx, float sy, float sw, float sh, float angle/*degree*/, float r, float g, float b, float a) const
-// dx, dy : Coordinate of sprite's left-top corner in screen space 
-// dw, dh : Size of sprite in screen space 
-// angle : Raotation angle (Rotation centre is sprite's centre), unit is degree
-// r, g, b : Color of sprite's each vertices 
+void sprite::render(ID3D11DeviceContext* immediate_context, float dx, float dy, float dw, float dh, float sx, float sy, float sw, float sh, float angle, float r, float g, float b, float a) const
 {
 	D3D11_VIEWPORT viewport;
 	UINT num_viewports = 1;
@@ -100,7 +96,6 @@ void sprite::render(ID3D11DeviceContext* immediate_context, float dx, float dy, 
 	float screen_width = viewport.Width;
 	float screen_height = viewport.Height;
 
-	// Set each sprite's vertices coordinate to screen spaceenum BLEND_STATE
 	// left-top
 	float x0 = dx;
 	float y0 = dy;
@@ -251,8 +246,8 @@ sprite_batch::sprite_batch(ID3D11Device* device, const wchar_t* file_name, size_
 	buffer_desc.StructureByteStride = 0;
 	D3D11_SUBRESOURCE_DATA subresource_data = {};
 	subresource_data.pSysMem = vertices;
-	subresource_data.SysMemPitch = 0; //Not use for vertex buffers.
-	subresource_data.SysMemSlicePitch = 0; //Not use for vertex buffers.
+	subresource_data.SysMemPitch = 0;
+	subresource_data.SysMemSlicePitch = 0;
 	hr = device->CreateBuffer(&buffer_desc, &subresource_data, vertex_buffer.GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
@@ -282,16 +277,16 @@ sprite_batch::sprite_batch(ID3D11Device* device, const wchar_t* file_name, size_
 		buffer_desc.MiscFlags = 0;
 		buffer_desc.StructureByteStride = 0;
 		subresource_data.pSysMem = instances;
-		subresource_data.SysMemPitch = 0; //Not use for vertex buffers.mm 
-		subresource_data.SysMemSlicePitch = 0; //Not use for vertex buffers.
+		subresource_data.SysMemPitch = 0;
+		subresource_data.SysMemSlicePitch = 0;
 		hr = device->CreateBuffer(&buffer_desc, &subresource_data, instance_buffer.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 	}
 	delete[] instances;
 
 	D3D11_RASTERIZER_DESC rasterizer_desc = {};
-	rasterizer_desc.FillMode = D3D11_FILL_SOLID; //D3D11_FILL_WIREFRAME, D3D11_FILL_SOLID
-	rasterizer_desc.CullMode = D3D11_CULL_NONE; //D3D11_CULL_NONE, D3D11_CULL_FRONT, D3D11_CULL_BACK   
+	rasterizer_desc.FillMode = D3D11_FILL_SOLID;
+	rasterizer_desc.CullMode = D3D11_CULL_NONE;  
 	rasterizer_desc.FrontCounterClockwise = FALSE;
 	rasterizer_desc.DepthBias = 0;
 	rasterizer_desc.DepthBiasClamp = 0;
@@ -366,23 +361,12 @@ void sprite_batch::begin(ID3D11DeviceContext* immediate_context)
 
 	count_instance = 0;
 }
-void sprite_batch::render(ID3D11DeviceContext* immediate_context, float dx, float dy, float dw, float dh, float sx, float sy, float sw, float sh, float angle/*degree*/, float r, float g, float b, float a)
+void sprite_batch::render(ID3D11DeviceContext* immediate_context, float dx, float dy, float dw, float dh, float sx, float sy, float sw, float sh, float angle, float r, float g, float b, float a)
 {
 	_ASSERT_EXPR(count_instance < MAX_INSTANCES, L"Number of instances must be less than MAX_INSTANCES.");
 
-	float cx = dw * 0.5f, cy = dh * 0.5f; /*Center of Rotation*/
-#if 0
-	DirectX::XMVECTOR scaling = DirectX::XMVectorSet(dw, dh, 1.0f, 0.0f);
-	DirectX::XMVECTOR origin = DirectX::XMVectorSet(cx, cy, 0.0f, 0.0f);
-	DirectX::XMVECTOR translation = DirectX::XMVectorSet(dx, dy, 0.0f, 0.0f);
-	DirectX::XMMATRIX M = DirectX::XMMatrixAffineTransformation2D(scaling, origin, angle * 0.01745f, translation);
-	DirectX::XMMATRIX N(
-		2.0f / viewport.Width, 0.0f, 0.0f, 0.0f,
-		0.0f, -2.0f / viewport.Height, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		-1.0f, 1.0f, 0.0f, 1.0f);
-	XMStoreFloat4x4(&instances[count_instance].ndc_transform, DirectX::XMMatrixTranspose(M * N)); //column_major
-#else
+	float cx = dw * 0.5f, cy = dh * 0.5f;
+
 	FLOAT c = cosf(angle * 0.01745f);
 	FLOAT s = sinf(angle * 0.01745f);
 	FLOAT w = 2.0f / viewport.Width;
@@ -403,7 +387,7 @@ void sprite_batch::render(ID3D11DeviceContext* immediate_context, float dx, floa
 	instances[count_instance].ndc_transform._24 = h * (-cx * s + -cy * c + cy + dy) + 1.0f;
 	instances[count_instance].ndc_transform._34 = 0.0f;
 	instances[count_instance].ndc_transform._44 = 1.0f;
-#endif
+
 	float tw = static_cast<float>(texture2d_desc.Width);
 	float th = static_cast<float>(texture2d_desc.Height);
 	instances[count_instance].texcoord_transform = DirectX::XMFLOAT4(sx / tw, sy / th, sw / tw, sh / th);

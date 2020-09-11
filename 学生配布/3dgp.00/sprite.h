@@ -36,7 +36,7 @@ public:
 
 	}
 
-	void render(ID3D11DeviceContext* immediate_context, float dx, float dy, float dw, float dh, float sx, float sy, float sw, float sh, float angle = 0/*degree*/, float r = 1, float g = 1, float b = 1, float a = 1) const;
+	void render(ID3D11DeviceContext* immediate_context, float dx, float dy, float dw, float dh, float sx, float sy, float sw, float sh, float angle = 0, float r = 1, float g = 1, float b = 1, float a = 1) const;
 	void textout(ID3D11DeviceContext* immediate_context, std::string s, float x, float y, float w, float h, float r = 1, float g = 1, float b = 1, float a = 1) const;
 };
 

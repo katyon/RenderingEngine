@@ -101,12 +101,9 @@ public:
 			if (wparam == VK_ESCAPE) PostMessage(hwnd, WM_CLOSE, 0, 0);
 			break;
 		case WM_ENTERSIZEMOVE:
-			// WM_EXITSIZEMOVE is sent when the user grabs the resize bars.
 			timer.stop();
 			break;
-		case WM_EXITSIZEMOVE:
-			// WM_EXITSIZEMOVE is sent when the user releases the resize bars.
-			// Here we reset everything based on the new window dimensions.
+
 			timer.start();
 			break;
 		default:
@@ -124,25 +121,22 @@ private:
 	high_resolution_timer timer;
 	void calculate_frame_stats()
 	{
-		// Code computes the average frames per second, and also the 
-		// average time it takes to render one frame.  These stats 
-		// are appended to the window caption bar.
 		static int frames = 0;
 		static float time_tlapsed = 0.0f;
 
 		frames++;
 
-		// Compute averages over one second period.
+		// 1秒あたりの平均フレーム
 		if ((timer.time_stamp() - time_tlapsed) >= 1.0f)
 		{
-			float fps = static_cast<float>(frames); // fps = frameCnt / 1
+			float fps = static_cast<float>(frames);
 			float mspf = 1000.0f / fps;
 			std::ostringstream outs;
 			outs.precision(6);
 			outs << "FPS : " << fps << " / " << "Frame Time : " << mspf << " (ms)";
 			SetWindowTextA(hwnd, outs.str().c_str());
 
-			// Reset for next average.
+			// リセット
 			frames = 0;
 			time_tlapsed += 1.0f;
 		}
