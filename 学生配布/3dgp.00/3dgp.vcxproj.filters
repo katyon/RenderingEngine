@@ -55,6 +55,9 @@
     <ClCompile Include="imgui\imgui_widgets.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
+    <ClCompile Include="geometric_primitive.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -105,12 +108,18 @@
     <ClInclude Include="imgui\imstb_truetype.h">
       <Filter>imgui</Filter>
     </ClInclude>
+    <ClInclude Include="geometric_primitive.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="sprite.hlsli">
       <Filter>Shaders</Filter>
     </None>
     <None Include="sprite_batch.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="geometric_primitive.hlsli">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
@@ -125,6 +134,12 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="sprite_batch_vs.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="geometric_primitive_vs.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="geometric_primitive_ps.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

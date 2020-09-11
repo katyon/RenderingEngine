@@ -15,6 +15,8 @@
 
 #include "sprite.h"
 
+#include "geometric_primitive.h"
+
 class framework
 {
 public:
@@ -32,6 +34,8 @@ public:
 	std::unique_ptr<sprite> font;
 
 	std::unique_ptr<sprite_batch> particle_batch;
+
+	std::unique_ptr<geometric_primitive> cube;
 
 	framework(HWND hwnd) : hwnd(hwnd)
 	{
@@ -63,11 +67,11 @@ public:
 		}
 
 #ifdef USE_IMGUI
-		// cleanup imgui
+		// imgui‚Ì‰ğ•úˆ—	
 		ImGui_ImplDX11_Shutdown();
 		ImGui_ImplWin32_Shutdown();
 		ImGui::DestroyContext();
-#endif // USE_IMGUI
+#endif
 
 		return static_cast<int>(msg.wParam);
 	}
@@ -75,7 +79,7 @@ public:
 	LRESULT CALLBACK handle_message(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{
 #ifdef USE_IMGUI
-		//imgui event catch
+		// ƒ}ƒEƒX‘€ìİ’è
 		if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) { return true; }
 #endif
 		switch (msg)

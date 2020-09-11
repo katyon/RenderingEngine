@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="geometric_primitive.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_impl_dx11.cpp" />
@@ -167,6 +168,7 @@
   <ItemGroup>
     <ClInclude Include="blender.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="geometric_primitive.h" />
     <ClInclude Include="high_resolution_timer.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="imgui\imconfig.h" />
@@ -183,10 +185,29 @@
     <ClInclude Include="texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="geometric_primitive.hlsli" />
     <None Include="sprite.hlsli" />
     <None Include="sprite_batch.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="geometric_primitive_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso </ObjectFileOutput>
+      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AssemblyCode</AssemblerOutput>
+      <AssemblerOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cod </AssemblerOutputFile>
+    </FxCompile>
+    <FxCompile Include="geometric_primitive_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso </ObjectFileOutput>
+      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AssemblyCode</AssemblerOutput>
+      <AssemblerOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cod</AssemblerOutputFile>
+    </FxCompile>
     <FxCompile Include="sprite_batch_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

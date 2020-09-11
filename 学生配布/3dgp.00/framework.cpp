@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <deque>
 
+#include "geometric_primitive.h"
+
 bool framework::initialize()
 {
 	HRESULT hr = S_OK;
@@ -155,6 +157,8 @@ bool framework::initialize()
 
 	particle_batch = std::make_unique<sprite_batch>(device.Get(), L"particle-smoke.png", 1024);
 
+	cube = std::make_unique<geometric_primitive>(device.Get());
+
 	return true;
 }
 void framework::update(float elapsed_time/*Elapsed seconds from last frame*/)
@@ -224,6 +228,63 @@ void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
 	decltype(queue)::iterator best = std::min_element(queue.begin(), queue.end());
 	immediate_context->OMSetBlendState(blender.states[blender::BS_ADD].Get(), nullptr, 0xFFFFFFFF);
 	font->textout(immediate_context.Get(), "benchmark t=" + std::to_string(*std::min_element(queue.begin(), queue.end())), 0, 0, 16, 16, 1, 1, 1, 1);
+
+	DirectX::XMFLOAT4 light_direction(0, -1, 0, 0);
+
+
+	DirectX::XMMATRIX P;	// projection matrix
+	{
+		D3D11_VIEWPORT viewport;
+		UINT num_viewports = 1;
+		immediate_context->RSGetViewports(&num_viewports, &viewport);
+		float aspect_ratio = viewport.Width / viewport.Height;
+		//P = DirectX::XMMatrixSet(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+		//P = DirectX::XMMatrixOrthographicLH(2 * aspect_ratio, 2, 0.1f, 100.0f);
+		P = DirectX::XMMatrixPerspectiveFovLH(30 * 0.01745f, aspect_ratio, 0.1f, 1000.0f);
+	}
+	DirectX::XMMATRIX V;	// view matrix
+	{
+		DirectX::XMVECTOR eye, focus, up;
+		eye = DirectX::XMVectorSet(0.0f, 0.0f, -10.0f, 1.0f);
+		focus = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+		up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+		V = DirectX::XMMatrixLookAtLH(eye, focus, up);
+	}
+	DirectX::XMMATRIX W;	// world matrix
+	{
+		DirectX::XMFLOAT3 position(0, 0, 0);
+		DirectX::XMFLOAT3 dimensions(1, 1, 1);
+		static DirectX::XMFLOAT3 angles(0, 0, 0);
+
+		angles.x += 30 * elapsed_time;
+		angles.y += 30 * elapsed_time;
+		angles.z += 30 * elapsed_time;
+
+		DirectX::XMMATRIX S, R, T;
+		//W = DirectX::XMMatrixIdentity();
+		S = DirectX::XMMatrixScaling(dimensions.x, dimensions.y, dimensions.z);
+		R = DirectX::XMMatrixRotationRollPitchYaw(angles.x * 0.01745f, angles.y * 0.01745f, angles.z * 0.01745f);
+		T = DirectX::XMMatrixTranslation(position.x, position.y, position.z);
+		W = S * R * T;
+	}
+
+	static bool wireframe = false;
+	if (GetAsyncKeyState(' ') & 1)
+	{
+		wireframe = !wireframe;
+	}
+
+	immediate_context->OMSetBlendState(blender.states[blender::BS_NONE].Get(), nullptr, 0xFFFFFFFF);
+	{
+		DirectX::XMFLOAT4X4 world_view_projection;
+		DirectX::XMFLOAT4X4 world;
+
+		DirectX::XMStoreFloat4x4(&world_view_projection, W * V * P);
+		DirectX::XMStoreFloat4x4(&world, W);
+
+		DirectX::XMFLOAT4 material_color(0.5f, 0.8f, 0.2f, 1.0f);
+		cube->render(immediate_context.Get(), world_view_projection, world, light_direction, material_color, wireframe);
+	}
 
 #ifdef USE_IMGUI
 	// sample code
