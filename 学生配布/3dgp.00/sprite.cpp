@@ -361,6 +361,7 @@ void sprite_batch::begin(ID3D11DeviceContext* immediate_context)
 
 	count_instance = 0;
 }
+
 void sprite_batch::render(ID3D11DeviceContext* immediate_context, float dx, float dy, float dw, float dh, float sx, float sy, float sw, float sh, float angle, float r, float g, float b, float a)
 {
 	_ASSERT_EXPR(count_instance < MAX_INSTANCES, L"Number of instances must be less than MAX_INSTANCES.");
@@ -395,6 +396,7 @@ void sprite_batch::render(ID3D11DeviceContext* immediate_context, float dx, floa
 
 	count_instance++;
 }
+
 void sprite_batch::end(ID3D11DeviceContext* immediate_context)
 {
 	immediate_context->Unmap(instance_buffer.Get(), 0);

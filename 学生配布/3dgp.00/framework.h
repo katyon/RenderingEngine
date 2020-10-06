@@ -36,6 +36,8 @@ public:
 	std::unique_ptr<sprite_batch> particle_batch;
 
 	std::unique_ptr<geometric_primitive> cube;
+	std::unique_ptr<geometric_primitive> cylinder;
+	std::unique_ptr<geometric_primitive> sphere;
 
 	framework(HWND hwnd) : hwnd(hwnd)
 	{
@@ -57,7 +59,7 @@ public:
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}
-			else
+			
 			{
 				timer.tick();
 				calculate_frame_stats();

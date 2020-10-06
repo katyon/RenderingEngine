@@ -6,9 +6,12 @@
 #include "blender.h"
 
 #include <algorithm>
+#include <vector>
 #include <deque>
 
 #include "geometric_primitive.h"
+#include <stdlib.h>
+
 
 bool framework::initialize()
 {
@@ -52,7 +55,6 @@ bool framework::initialize()
         }
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
-
     // スワップチェインの作成
     BOOL enable_4x_msaa = TRUE;
     {
@@ -111,7 +113,7 @@ bool framework::initialize()
         Microsoft::WRL::ComPtr<ID3D11Texture2D> depth_stencil_buffer;
         depth_stencil_buffer_desc.MipLevels = 1;
         depth_stencil_buffer_desc.ArraySize = 1;
-        depth_stencil_buffer_desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+        depth_stencil_buffer_desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;	//DXGI_FORMAT_D32_FLOAT
         depth_stencil_buffer_desc.Usage = D3D11_USAGE_DEFAULT;
         depth_stencil_buffer_desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
         depth_stencil_buffer_desc.CPUAccessFlags = 0;
@@ -152,11 +154,14 @@ bool framework::initialize()
 
     sprites[0] = std::make_unique<sprite>(device.Get(), L"player-sprites.png");
     particle = std::make_unique<sprite>(device.Get(), L"particle-smoke.png");
+
     font = std::make_unique<sprite>(device.Get(), L"./fonts/font0.png");
 
     particle_batch = std::make_unique<sprite_batch>(device.Get(), L"particle-smoke.png", 1024);
 
     cube = std::make_unique<geometric_primitive>(device.Get());
+    cylinder = std::make_unique<geometric_cylinder>(device.Get(), 32);
+    sphere = std::make_unique<geometric_sphere>(device.Get(), 32, 32);
 
     return true;
 }
@@ -185,46 +190,46 @@ void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
 
     static blender blender(device.Get());
 
-    static DirectX::XMFLOAT2 sprite_position[256] = {};
-    static float timer = 0;
-    timer += elapsed_time;
-    if (timer > 4.0f) // 4秒に一度更新
-    {
-        for (auto& p : sprite_position)
-        {
-            float a = static_cast<float>(rand()) / RAND_MAX * 360.0f;
-            float r = static_cast<float>(rand()) / RAND_MAX * 64.0f;
-            p.x = cosf(a * 0.01745f) * r;
-            p.y = sinf(a * 0.01745f) * r;
-        }
-        timer = 0;
-    }
+    //static DirectX::XMFLOAT2 sprite_position[256] = {};
+    //static float timer = 0;
+    //timer += elapsed_time;
+    //if (timer > 4.0f) // 4秒に一度更新
+    //{
+    //    for (auto& p : sprite_position)
+    //    {
+    //        float a = static_cast<float>(rand()) / RAND_MAX * 360.0f;
+    //        float r = static_cast<float>(rand()) / RAND_MAX * 64.0f;
+    //        p.x = cosf(a * 0.01745f) * r;
+    //        p.y = sinf(a * 0.01745f) * r;
+    //    }
+    //    timer = 0;
+    //}
 
-    static benchmark bm;
-    bm.begin();
+    //static benchmark bm;
+    //bm.begin();
 
-    immediate_context->OMSetBlendState(blender.states[blender::BS_ADD].Get(), nullptr, 0xFFFFFFFF);
+    //immediate_context->OMSetBlendState(blender.states[blender::BS_ADD].Get(), nullptr, 0xFFFFFFFF);
 
-    particle_batch->begin(immediate_context.Get());
-    for (auto& p : sprite_position)
-    {
-        particle_batch->render(immediate_context.Get(), p.x + 256, p.y + 256, 64, 64, 0, 0, 420, 420, angle * 4, 0.2f, 0.05f * timer, 0.01f * timer, fabsf(sinf(3.141592f * timer * 0.5f * 0.5f)));
-    }
-    particle_batch->end(immediate_context.Get());
+    //particle_batch->begin(immediate_context.Get());
+    //for (auto& p : sprite_position)
+    //{
+    //    particle_batch->render(immediate_context.Get(), p.x + 256, p.y + 256, 64, 64, 0, 0, 420, 420, angle * 4, 0.2f, 0.05f * timer, 0.01f * timer, fabsf(sinf(3.141592f * timer * 0.5f * 0.5f)));
+    //}
+    //particle_batch->end(immediate_context.Get());
 
-    float t = bm.end();
+    //float t = bm.end();
 
-    static const int N = 10;
-    static std::deque<float> queue(N, FLT_MAX);
-    queue.push_back(t);
-    queue.pop_front();
-    decltype(queue)::iterator best = std::min_element(queue.begin(), queue.end());
-    immediate_context->OMSetBlendState(blender.states[blender::BS_ADD].Get(), nullptr, 0xFFFFFFFF);
-    font->textout(immediate_context.Get(), "benchmark t=" + std::to_string(*std::min_element(queue.begin(), queue.end())), 0, 0, 16, 16, 1, 1, 1, 1);
+    //static const int N = 10;
+    //static std::deque<float> queue(N, FLT_MAX);
+    //queue.push_back(t);
+    //queue.pop_front();
+    //decltype(queue)::iterator best = std::min_element(queue.begin(), queue.end());
+    //immediate_context->OMSetBlendState(blender.states[blender::BS_ADD].Get(), nullptr, 0xFFFFFFFF);
+    //font->textout(immediate_context.Get(), "benchmark t=" + std::to_string(*std::min_element(queue.begin(), queue.end())), 0, 0, 16, 16, 1, 1, 1, 1);
 
     // カメラから光が出る
-    //0.0f, 0.0f, -10.0f, 1.0f
     DirectX::XMFLOAT4 light_direction(0, 0, 10, 0);
+    //(0.0f, 0.0f, -10.0f, 1.0f)
 
 #ifdef USE_IMGUI
 
@@ -303,10 +308,13 @@ void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
         DirectX::XMStoreFloat4x4(&world_view_projection, W * V * P);
         DirectX::XMStoreFloat4x4(&world, W);
 
-        //DirectX::XMFLOAT4 material_color(0.5f, 0.8f, 0.2f, 1.0f);
-        DirectX::XMFLOAT4 material_color = im_color;
+        DirectX::XMFLOAT4 material_color(0.5f, 0.8f, 0.2f, 1.0f);
+        //DirectX::XMFLOAT4 material_color = im_color;
 
         cube->render(immediate_context.Get(), world_view_projection, world, light_direction, material_color, wireframe);
+        //cylinder->render(immediate_context.Get(), world_view_projection, world, light_direction, material_color, wireframe);
+        //sphere->render(immediate_context.Get(), world_view_projection, world, light_direction, material_color, wireframe);
+
     }
 
 #ifdef USE_IMGUI

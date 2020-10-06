@@ -43,3 +43,20 @@ protected:
 	void create_buffers(ID3D11Device* device, vertex* vertices, int num_vertices, u_int* indices, int num_indices);
 };
 
+class geometric_cube : public geometric_primitive
+{
+public:
+	geometric_cube(ID3D11Device* device);
+};
+
+class geometric_cylinder : public geometric_primitive
+{
+public:
+	geometric_cylinder(ID3D11Device* device, u_int slices);
+};
+
+class geometric_sphere : public geometric_primitive
+{
+public:
+	geometric_sphere(ID3D11Device* device, u_int slices, u_int stacks);
+};
