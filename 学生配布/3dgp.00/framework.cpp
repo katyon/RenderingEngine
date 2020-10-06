@@ -156,7 +156,9 @@ bool framework::initialize()
 
     particle_batch = std::make_unique<sprite_batch>(device.Get(), L"particle-smoke.png", 1024);
 
-    cube = std::make_unique<geometric_primitive>(device.Get());
+    cube = std::make_unique<geometric_cube>(device.Get());
+    cylinder = std::make_unique<geometric_cylinder>(device.Get(), 32);
+    sphere = std::make_unique<geometric_sphere>(device.Get(), 32, 32);
 
     return true;
 }
@@ -250,7 +252,7 @@ void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
         ImGui::End();
     }
 #endif
-
+    
     DirectX::XMMATRIX P;	// projection matrix
     {
         D3D11_VIEWPORT viewport;
@@ -306,7 +308,9 @@ void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
         //DirectX::XMFLOAT4 material_color(0.5f, 0.8f, 0.2f, 1.0f);
         DirectX::XMFLOAT4 material_color = im_color;
 
-        cube->render(immediate_context.Get(), world_view_projection, world, light_direction, material_color, wireframe);
+        //cube->render(immediate_context.Get(), world_view_projection, world, light_direction, material_color, wireframe);
+        //cylinder->render(immediate_context.Get(), world_view_projection, world, light_direction, material_color, wireframe);
+        sphere->render(immediate_context.Get(), world_view_projection, world, light_direction, material_color, wireframe);
     }
 
 #ifdef USE_IMGUI
